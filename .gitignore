@@ -54,3 +54,6 @@ plan.out
 # Windows
 Thumbs.db
 Desktop.ini
+
+# Lambda build artifacts
+build/

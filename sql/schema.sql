@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS servicios (
+    id SERIAL PRIMARY KEY,
+    cliente VARCHAR(150) NOT NULL,
+    equipo VARCHAR(150) NOT NULL,
+    descripcion TEXT NOT NULL,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

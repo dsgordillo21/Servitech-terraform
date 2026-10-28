@@ -1,7 +1,7 @@
 variable "aws_region" {
   description = "Region principal donde se desplegara ServiTech"
   type        = string
-  default     = "us-east-1"
+  default     = "us-east-2"
 }
 
 variable "aws_profile" {

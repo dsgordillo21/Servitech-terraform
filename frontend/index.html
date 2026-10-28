@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Registra y consulta los servicios técnicos de ServiTech.">
+    <title>ServiTech | Servicios técnicos</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">Ir al contenido</a>
+    <header class="header">
+      <div class="container brand"><span class="brand-mark" aria-hidden="true">S</span>ServiTech</div>
+    </header>
+    <main id="contenido" class="container">
+      <div class="intro">
+        <p class="eyebrow">Gestión de servicios técnicos</p>
+        <h1>Cada servicio, a un paso.</h1>
+        <p>Registra un equipo o consulta los datos de un servicio con su ID.</p>
+      </div>
+      <p id="api-notice" class="notice" role="status">La conexión con la API está pendiente de configuración. Por ahora no se pueden registrar ni consultar servicios.</p>
+      <noscript><p class="notice">Activa JavaScript en tu navegador para registrar y consultar servicios.</p></noscript>
+      <div class="workspace">
+        <section class="card" aria-labelledby="registrar-titulo">
+          <p class="eyebrow">Nuevo ingreso</p>
+          <h2 id="registrar-titulo">Registrar servicio</h2>
+          <p class="hint">Todos los campos son obligatorios.</p>
+          <form id="register-form" novalidate>
+            <fieldset id="register-fields">
+              <legend class="sr-only">Datos del nuevo servicio</legend>
+              <label for="cliente">Cliente</label>
+              <input id="cliente" name="cliente" type="text" maxlength="150" autocomplete="name" required>
+              <label for="equipo">Equipo</label>
+              <input id="equipo" name="equipo" type="text" maxlength="150" placeholder="Ej.: Laptop Lenovo ThinkPad" required>
+              <label for="descripcion">Descripción</label>
+              <textarea id="descripcion" name="descripcion" rows="4" placeholder="Describe el motivo del servicio" required></textarea>
+              <button id="register-button" type="submit">Registrar servicio</button>
+            </fieldset>
+            <p id="register-status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>
+          </form>
+        </section>
+        <section class="card" aria-labelledby="consultar-titulo">
+          <p class="eyebrow">Seguimiento</p>
+          <h2 id="consultar-titulo">Consultar servicio</h2>
+          <p class="hint" id="id-help">Ingresa el ID recibido al registrar el servicio.</p>
+          <form id="lookup-form" novalidate>
+            <fieldset id="lookup-fields">
+              <legend class="sr-only">Identificador del servicio</legend>
+              <label for="servicio-id">ID del servicio</label>
+              <input id="servicio-id" name="id" type="text" inputmode="numeric" pattern="[0-9]+" aria-describedby="id-help" placeholder="Ej.: 123" required>
+              <button id="lookup-button" type="submit">Consultar</button>
+            </fieldset>
+            <p id="lookup-status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>
+          </form>
+          <div id="service-result" class="result" hidden>
+            <h3>Datos del servicio</h3>
+            <dl>
+              <div><dt>ID</dt><dd id="result-id"></dd></div>
+              <div><dt>Cliente</dt><dd id="result-cliente"></dd></div>
+              <div><dt>Equipo</dt><dd id="result-equipo"></dd></div>
+              <div><dt>Descripción</dt><dd id="result-descripcion"></dd></div>
+              <div><dt>Fecha de registro</dt><dd id="result-fecha_registro"></dd></div>
+            </dl>
+          </div>
+        </section>
+      </div>
+    </main>
+    <footer class="container footer">ServiTech · Registro y consulta de servicios</footer>
+  </body>
+</html>

@@ -123,11 +123,19 @@ resource "aws_s3_object" "styles" {
   depends_on = [aws_s3_bucket_server_side_encryption_configuration.frontend]
 }
 
+locals {
+  frontend_app_js = replace(
+    file("${path.module}/../frontend/app.js"),
+    "API_URL_PENDIENTE",
+    aws_api_gateway_stage.dev.invoke_url
+  )
+}
+
 resource "aws_s3_object" "app" {
   bucket        = aws_s3_bucket.frontend.id
   key           = "app.js"
-  source        = "${path.module}/../frontend/app.js"
-  source_hash   = filemd5("${path.module}/../frontend/app.js")
+  content       = local.frontend_app_js
+  source_hash   = md5(local.frontend_app_js)
   content_type  = "text/javascript; charset=utf-8"
   cache_control = "public, max-age=0, s-maxage=60, must-revalidate"
 

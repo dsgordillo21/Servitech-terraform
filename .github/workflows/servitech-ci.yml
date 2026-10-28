@@ -1,0 +1,115 @@
+name: ServiTech CI
+
+run-name: ${{ github.actor }} ejecutó ServiTech CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform-ci:
+    name: Validar MVP con Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Mostrar información del evento
+        run: |
+          echo "Evento ejecutado: ${{ github.event_name }}"
+          echo "Rama: ${{ github.ref }}"
+          echo "Repositorio: ${{ github.repository }}"
+
+      - name: Checkout del repositorio
+        uses: actions/checkout@v7
+
+      - name: Listar archivos del repositorio
+        run: |
+          ls -la
+          echo "Contenido de terraform:"
+          ls -la terraform
+          echo "Contenido de lambda:"
+          ls -la lambda
+
+      - name: Configurar Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Construir paquetes Lambda
+        run: |
+          rm -rf build
+          mkdir -p build/pkg_registrar
+          mkdir -p build/pkg_consultar
+
+          pip install \
+            -r lambda/requirements.txt \
+            --target build/pkg_registrar
+
+          cp lambda/registrar_servicio/lambda_function.py \
+            build/pkg_registrar/lambda_function.py
+
+          cp -r build/pkg_registrar/. build/pkg_consultar/
+
+          cp lambda/consultar_servicio/lambda_function.py \
+            build/pkg_consultar/lambda_function.py
+
+          cd build/pkg_registrar
+          zip -r ../registrar_servicio.zip .
+          cd ../..
+
+          cd build/pkg_consultar
+          zip -r ../consultar_servicio.zip .
+          cd ../..
+
+          echo "Paquetes Lambda creados:"
+          ls -lh build/*.zip
+
+      - name: Configurar Terraform
+        uses: hashicorp/setup-terraform@v4
+
+      - name: Mostrar versión de Terraform
+        run: terraform version
+
+      - name: Inicializar Terraform para validación
+        working-directory: terraform
+        run: terraform init -backend=false
+
+      - name: Comprobar formato Terraform
+        working-directory: terraform
+        run: terraform fmt -check
+
+      - name: Validar Terraform
+        working-directory: terraform
+        run: terraform validate
+
+      - name: Verificar GitHub Secret
+        env:
+          SERVITECH_API_URL: ${{ secrets.SERVITECH_API_URL }}
+        run: |
+          if [ -z "$SERVITECH_API_URL" ]; then
+            echo "El secret SERVITECH_API_URL no está configurado."
+            exit 1
+          fi
+
+          echo "GitHub Secret SERVITECH_API_URL configurado correctamente."
+
+      - name: Probar MVP desplegado
+        if: github.event_name == 'workflow_dispatch'
+        shell: pwsh
+        env:
+          SERVITECH_API_URL: ${{ secrets.SERVITECH_API_URL }}
+        run: |
+          ./scripts/test_mvp.ps1 -ApiUrl $env:SERVITECH_API_URL
+
+      - name: Estado final
+        run: |
+          echo "Workflow finalizado con estado: ${{ job.status }}"

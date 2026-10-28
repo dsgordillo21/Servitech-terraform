@@ -5,9 +5,9 @@ variable "aws_region" {
 }
 
 variable "aws_profile" {
-  description = "Perfil local de AWS CLI utilizado para ServiTech"
+  description = "Perfil AWS opcional; null permite usar AWS_PROFILE o credenciales temporales de OIDC"
   type        = string
-  default     = "servitech"
+  default     = null
 }
 
 variable "project_name" {
